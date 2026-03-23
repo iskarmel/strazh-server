@@ -89,6 +89,15 @@ app.post('/api/validate-license', async (req, res) => {
   res.json(result);
 });
 
+app.get('/api/download-extension', (req, res) => {
+  const extensionPath = path.join(__dirname, '../strazh-extension.zip');
+  if (require('fs').existsSync(extensionPath)) {
+    res.download(extensionPath, 'strazh-extension.zip');
+  } else {
+    res.status(404).json({ error: 'Файл расширения не найден на сервере' });
+  }
+});
+
 app.get('/api/status', (req, res) => {
   res.json({ status: 'ok', version: '2.0.0', name: 'Страж API' });
 });
@@ -118,5 +127,16 @@ ${content}
   "recommendation": "install" | "careful" | "block"
 }
 
-Ищи: обфускацию, подозрительные сетевые запросы, опасные права, автозапуск, typosquatting, prompt injection в MCP, невидимые символы. Отвечай на русском.`;
+Ищи в коде: обфускацию, подозрительные сетевые запросы, опасные права, автозапуск, typosquatting, prompt injection в MCP, невидимые символы.
+
+Ищи в письмах (email):
+- Несовпадение имени отправителя и домена (например, "Сбербанк" но домен sberbank-online.xyz)
+- Поддельный Reply-To отличающийся от From
+- Срочность и запугивание ("заблокируем аккаунт", "последнее предупреждение")
+- Просьбы ввести пароль, данные карты, код из SMS
+- Подозрительные ссылки (сокращённые URL, опечатки в доменах)
+- Вложения с опасными расширениями замаскированными под документы
+- Признаки массовой рассылки
+
+Отвечай на русском.`;
 }
